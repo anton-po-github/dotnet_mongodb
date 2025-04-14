@@ -28,11 +28,18 @@ public class AuthenticationController : ControllerBase
 
     }
 
-    [Authorize]
-    [HttpGet("all")]
-    public string GetAllUsers()
+    [Authorize(Roles = "Admin")]
+    [HttpGet("secret")]
+    public string GetSomeSecretText()
     {
         return "some secret text";
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet("all")]
+    public IEnumerable<IdentityUser> GetAllUsers()
+    {
+        return _userManager.Users.ToList();
     }
 
     [HttpGet("confirm-email")]
@@ -89,7 +96,7 @@ public class AuthenticationController : ControllerBase
             if (!createUserResult.Succeeded) return new RegisterResponse { Message = $"Create user failed {createUserResult?.Errors?.First()?.Description}", Success = false };
             //user is created...
             //then add user to a role...
-            var addUserToRoleResult = await _userManager.AddToRoleAsync(userExists, "USER");
+            var addUserToRoleResult = await _userManager.AddToRoleAsync(userExists, userExists.UserName == "Bob" ? "Admin" : "User");
             if (!addUserToRoleResult.Succeeded) return new RegisterResponse { Message = $"Create user succeeded but could not add user to role {addUserToRoleResult?.Errors?.First()?.Description}", Success = false };
 
 
@@ -165,7 +172,8 @@ public class AuthenticationController : ControllerBase
                 Message = "Login Successful",
                 Email = user?.Email,
                 Success = true,
-                UserId = user?.Id.ToString()
+                UserId = user?.Id.ToString(),
+                Role = await _userManager.GetRolesAsync(user)
             };
         }
         catch (Exception ex)
