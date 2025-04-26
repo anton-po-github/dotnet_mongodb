@@ -57,6 +57,7 @@ public class BooksController : ControllerBase
     public IActionResult Delete(string id)
     {
         var book = _bookService.GetOneBook(id);
+
         if (book == null)
         {
             return NotFound();
