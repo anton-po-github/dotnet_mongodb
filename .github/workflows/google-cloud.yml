@@ -46,7 +46,6 @@ jobs:
           region: ${{ secrets.GAR_LOCATION }}
           env_vars: |
             ASPNETCORE_URLS=http://*:$PORT
-            ASPNETCORE_HTTP_PORTS=9090
             DatabaseSettings__ConnectionString=${{ secrets.DatabaseSettings__ConnectionString }}
             DatabaseSettings__DatabaseName=${{ secrets.DatabaseSettings__DatabaseName }}
             DatabaseSettings__BooksCollectionName=${{ secrets.DatabaseSettings__BooksCollectionName }}
