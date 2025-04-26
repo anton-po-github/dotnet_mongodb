@@ -11,9 +11,12 @@ RUN dotnet publish -c Release -o out
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
 WORKDIR /app
 
-# Указываем, что в контейнере слушаем 8080
+# Копируем сборку
+COPY --from=build /app/out .
+
+# Декларативно заявляем 8080
 EXPOSE 8080
 
-COPY --from=build /app/out .
-# Гарантированно читаем PORT и прокидываем в --urls
-ENTRYPOINT ["dotnet", "dotnet_mongodb.dll", "--urls", "http://*:$PORT"]
+# Shell-ENTRYPOINT: теперь $PORT будет разворачиваться
+ENTRYPOINT sh -c "dotnet dotnet_mongodb.dll --urls http://*:\$PORT"
+
