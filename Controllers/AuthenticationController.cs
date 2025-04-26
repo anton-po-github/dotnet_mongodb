@@ -103,6 +103,7 @@ public class AuthenticationController : ControllerBase
             var sendEmail = new EmailModel();
 
             sendEmail.ToEmail = request.Email;
+
             sendEmail.Subject = "My tests";
 
             await _emailService.SendEmail(sendEmail);
