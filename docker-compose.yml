@@ -1,0 +1,11 @@
+# docker-compose.yml (без version: …)
+services:
+  api:
+    build: .
+    ports:
+      - "9090:9090"
+    environment:
+      - DatabaseSettings__ConnectionString=${MONGODB_CONNECTION}
+      - DatabaseSettings__DatabaseName=BookstoreDb
+      - DatabaseSettings__BooksCollectionName=Books
+

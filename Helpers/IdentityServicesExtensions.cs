@@ -12,12 +12,14 @@ public static class IdentityServicesExtensions
     public static IServiceCollection AddIdentityServices(this IServiceCollection services, IConfiguration config)
     {
 
+        var dbSettings = config.GetSection(nameof(DatabaseSettings)).Get<DatabaseSettings>()!;
+
         var mongoDbIdentityConfig = new MongoDbIdentityConfiguration
         {
             MongoDbSettings = new MongoDbSettings
             {
-                ConnectionString = "mongodb://admin:admin@localhost:27017/",
-                DatabaseName = "identity"
+                ConnectionString = dbSettings.ConnectionString,
+                DatabaseName = dbSettings.DatabaseName
             },
 
             IdentityOptionsAction = options =>
