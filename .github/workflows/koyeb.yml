@@ -21,16 +21,17 @@ jobs:
       - name: Build and deploy to Koyeb
         uses: koyeb/action-git-deploy@v1
         with:
-          app-name: bookstore-api
-          service-name: bookstore-api
-          git-builder: docker
-          git-docker-dockerfile: Dockerfile
-
-          # Correctly formatted, comma-separated environment variables
-          service-env: ASPNETCORE_ENVIRONMENT=Production,MONGODB_CONNECTION=${{ secrets.MONGODB_CONNECTION }}
-
-          # Valid instance type for Hobby plan
-          service-instance-type: free
-
-          service-ports: "80:http"
-          service-routes: "/:80"
+            app-name: bookstore-api
+            service-name: bookstore-api
+            git-builder: docker
+            git-docker-dockerfile: Dockerfile
+        
+            # Forward port 80 externally to 9090 in the container
+            service-ports: "80:9090"
+        
+            # Environment variables (comma-separated)
+            service-env: ASPNETCORE_ENVIRONMENT=Production,MONGODB_CONNECTION=${{ secrets.MONGODB_CONNECTION }}
+        
+            # Use free tier instance (or eco-nano)
+            service-instance-type: free
+            service-routes: "/:80"
