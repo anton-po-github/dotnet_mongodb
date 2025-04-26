@@ -13,9 +13,11 @@ RUN dotnet publish -c Release -o out
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
 WORKDIR /app
 
-ENV ASPNETCORE_URLS="http://*:${PORT:-8080}"
+# Говорим, что контейнер слушает порт 8080
 EXPOSE 8080
 
 # Копируем собранное приложение
 COPY --from=build /app/out .  
-ENTRYPOINT ["dotnet", "dotnet_mongodb.dll"]
+
+# Явно задаём --urls из переменной $PORT
+ENTRYPOINT ["dotnet", "dotnet_mongodb.dll", "--urls", "http://*:$PORT"]
