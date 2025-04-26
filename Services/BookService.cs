@@ -36,6 +36,7 @@ public class BookService
     public void Remove(Book bookIn, string iconId)
     {
         _dataContext.Books.DeleteOne(book => book.Id == bookIn.Id);
+
         _fileService.DeleteFile(iconId);
     }
 
