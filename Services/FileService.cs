@@ -6,10 +6,12 @@ public class FileService
 {
     private readonly IWebHostEnvironment _hostEnvironment;
     private readonly DataContext _dataContext = null;
+    private readonly IConfiguration _config;
 
-    public FileService(IWebHostEnvironment hostEnvironment, IDatabaseSettings databaseSettings)
+    public FileService(IWebHostEnvironment hostEnvironment, IDatabaseSettings databaseSettings, IConfiguration config)
     {
         _hostEnvironment = hostEnvironment;
+        _config = config;
         _dataContext = new DataContext(databaseSettings);
     }
 
@@ -64,7 +66,10 @@ public class FileService
 
     public async Task DownloadFileMongo()
     {
-        var client = new MongoClient("mongodb://localhost:27017");
+
+        var dbSettings = _config.GetSection(nameof(DatabaseSettings)).Get<DatabaseSettings>()!;
+
+        var client = new MongoClient(dbSettings.ConnectionString);
 
         var database = client.GetDatabase("BookstoreDb");
 
