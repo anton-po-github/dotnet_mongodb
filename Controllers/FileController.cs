@@ -27,53 +27,12 @@ public class FileController : ControllerBase
         return "";
     }
 
-    /*public IActionResult Upload(IFormFile file)
-    {
-       // var myFile = Request.Form.Files[0];
-
-
-       _fileService.Save(file);
-       return Ok();
-    }*/
-
-    /*[HttpPost]
-    [Route("upload")]
-    public async Task<ObjectId>UploadFile(IFormFile file)
-    {
-        return await _fileService.UploadFile(file);
-    }*/
-
-    /*[HttpPost]
-    [Route("upload")]
-    public string UploadFile(IFormFile file)
-    {
-        return _fileService.UploadFile(file);
-    }*/
-
-    /*
-    [HttpPost]
-    [Route("upload")]
-    public string UploadFile()
-    {
-        return fileService.UploadFileMongo();
-    }
-    */
-
-    // POST api/notes/uploadFile
-    /*[HttpPost("uploadFile")]
-    public async Task<string> UploadFile(IFormFile file)
-    {
-        return await _fileService.UploadFile(file);
-    }*/
-
-    // POST api/notes/uploadFile
     [HttpPost("uploadFile")]
     public async Task<ObjectId> UploadFile(IFormFile file)
     {
         return await _fileService.UploadFile(file);
     }
 
-    // GET api/notes/getFileInfo/d1we24ras41wr
     [HttpGet("getFileInfo/{id}")]
     public Task<String> GetFileInfo(string id)
     {

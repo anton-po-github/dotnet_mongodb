@@ -1,0 +1,67 @@
+name: Deploy to Koyeb
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd="mongosh mongodb://localhost:27017 --quiet --eval 'db.adminCommand({ping:1})'"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+          --health-start-period=30s
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup .NET 9
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build (Release)
+        run: dotnet build --no-restore -c Release
+
+      - name: Run tests
+        env:
+          MONGODB_URI: mongodb://localhost:27017/BookstoreDb
+        run: dotnet test --no-build --verbosity normal
+        
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: "${{ github.ref_name }}"
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install and configure the Koyeb CLI
+        uses: koyeb-community/koyeb-actions@v2
+        with:
+          api_token: ${{ secrets.KOYEB_API_TOKEN }}
+
+      - name: Build and deploy to Koyeb
+        uses: koyeb/action-git-deploy@v1
+        with:
+          app-name: bookstore-api
+          service-name: bookstore-api
+          git-builder: docker
+          git-docker-dockerfile: Dockerfile
+          service-env: |
+            ASPNETCORE_ENVIRONMENT=Production,
+            MONGODB_CONNECTION=${{ secrets.MONGODB_CONNECTION }}
+          service-ports: "80:http"
+          service-routes: "/:80"
