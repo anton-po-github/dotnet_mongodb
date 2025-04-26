@@ -46,6 +46,7 @@ jobs:
           region: ${{ secrets.GAR_LOCATION }}
           env_vars: |
             ASPNETCORE_URLS=http://*:$PORT
+            ASPNETCORE_HTTP_PORTS=9090
             DatabaseSettings__ConnectionString=${{ secrets.DatabaseSettings__ConnectionString }}
             DatabaseSettings__DatabaseName=${{ secrets.DatabaseSettings__DatabaseName }}
             DatabaseSettings__BooksCollectionName=${{ secrets.DatabaseSettings__BooksCollectionName }}
@@ -54,10 +55,6 @@ jobs:
             MailjetConfig__MailjetSecretKey=${{ secrets.MailjetConfig__MailjetSecretKey }}
             Token__Key=${{ secrets.Token__Key }}
             Token__Issuer=${{ secrets.Token__Issuer }}
-            ConnectionStrings__ChatMessageConnection=${{ secrets.ConnectionStrings__ChatMessageConnection }}
-            ConnectionStrings__PostgresConnection=${{ secrets.ConnectionStrings__PostgresConnection }}
-            ConnectionStrings__UsersConnection=${{ secrets.ConnectionStrings__UsersConnection }}
-            ConnectionStrings__IdentityConnection=${{ secrets.ConnectionStrings__IdentityConnection }}
           env_vars_update_strategy: merge
 
       - name: Allow unauthenticated invocations
