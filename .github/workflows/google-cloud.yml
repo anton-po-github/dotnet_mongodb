@@ -27,7 +27,7 @@ jobs:
       - name: Build and push Docker image
         run: |
           IMAGE_URI="${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GAR_REPOSITORY }}/dotnet-mongo:${{ github.sha }}"
-          docker build -t "$IMAGE_URI" -f Dockerfile .
+          docker build --no-cache -t "$IMAGE_URI" -f Dockerfile .
           docker push "$IMAGE_URI"
           echo "IMAGE_URI=$IMAGE_URI" >> "$GITHUB_ENV"
 
