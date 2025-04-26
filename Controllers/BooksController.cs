@@ -15,7 +15,7 @@ public class BooksController : ControllerBase
         _bookService = bookService;
     }
 
-    [Authorize(Roles = "User")]
+    //[Authorize(Roles = "User")]
     [HttpGet]
     public ActionResult<List<Book>> Get() => _bookService.Get();
 

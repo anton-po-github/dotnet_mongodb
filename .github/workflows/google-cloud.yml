@@ -1,0 +1,70 @@
+# .github/workflows/deploy-to-gcp.yml
+name: Deploy to GCP Cloud Run
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: "${{ github.ref_name }}"
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Configure Docker for Artifact Registry
+        run: |
+          gcloud auth configure-docker ${{ secrets.GAR_LOCATION }}-docker.pkg.dev --quiet
+
+      - name: Build Docker image
+        run: |
+          IMAGE_URI="${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GAR_REPOSITORY }}/dotnet-mongo:${{ github.sha }}"
+          docker build -t "$IMAGE_URI" -f Dockerfile .
+          echo "IMAGE_URI=$IMAGE_URI" >> "$GITHUB_ENV"
+
+      - name: Push Docker image to Artifact Registry
+        run: |
+          docker push ${{ env.IMAGE_URI }}
+
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: dotnet-mongo-service
+          image: ${{ env.IMAGE_URI }}
+          region: ${{ secrets.GAR_LOCATION }}
+          env_vars: |
+            ASPNETCORE_URLS=http://*:$PORT
+            DatabaseSettings__ConnectionString=${{ secrets.DatabaseSettings__ConnectionString }}
+            DatabaseSettings__DatabaseName=${{ secrets.DatabaseSettings__DatabaseName }}
+            DatabaseSettings__BooksCollectionName=${{ secrets.DatabaseSettings__BooksCollectionName }}
+            MailjetConfig__MailjetEmail=${{ secrets.MailjetConfig__MailjetEmail }}
+            MailjetConfig__MailjetApiKey=${{ secrets.MailjetConfig__MailjetApiKey }}
+            MailjetConfig__MailjetSecretKey=${{ secrets.MailjetConfig__MailjetSecretKey }}
+            Token__Key=${{ secrets.Token__Key }}
+            Token__Issuer=${{ secrets.Token__Issuer }}
+            ConnectionStrings__ChatMessageConnection=${{ secrets.ConnectionStrings__ChatMessageConnection }}
+            ConnectionStrings__PostgresConnection=${{ secrets.ConnectionStrings__PostgresConnection }}
+            ConnectionStrings__UsersConnection=${{ secrets.ConnectionStrings__UsersConnection }}
+            ConnectionStrings__IdentityConnection=${{ secrets.ConnectionStrings__IdentityConnection }}
+          env_vars_update_strategy: merge
+
+      - name: Allow unauthenticated invocations
+        run: |
+          gcloud run services add-iam-policy-binding dotnet-mongo-service \
+            --member="allUsers" \
+            --role="roles/run.invoker" \
+            --region=${{ secrets.GAR_LOCATION }}

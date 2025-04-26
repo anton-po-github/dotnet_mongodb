@@ -7,8 +7,10 @@ public class EmailService
     private readonly ILogger<EmailService> _logger;
     private readonly string _apiKey;
     private readonly string _secretKey;
+    private readonly IConfiguration _config;
     public EmailService(ILogger<EmailService> logger, IConfiguration configuration)
     {
+        _config = configuration;
         _logger = logger;
         _apiKey = configuration["MailjetConfig:MailjetApiKey"];
         _secretKey = configuration["MailjetConfig:MailjetSecretKey"];
@@ -18,6 +20,8 @@ public class EmailService
     {
         try
         {
+            var dbSettings = _config.GetSection(nameof(DatabaseSettings)).Get<DatabaseSettings>()!;
+
             MailjetClient client = new MailjetClient(_apiKey, _secretKey);
 
             MailjetRequest request = new MailjetRequest
@@ -25,7 +29,7 @@ public class EmailService
                 Resource = Send.Resource
             };
 
-            var confirmLink = $"http://localhost:5325/api/v1/authenticate/confirm-email?email={emailModel.ToEmail}";
+            var confirmLink = $"dbSettings.Token.Issuer/api/v1/authenticate/confirm-email?email={emailModel.ToEmail}";
             var emailModelBody = @"
                 Hello.
 
