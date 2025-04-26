@@ -1,4 +1,3 @@
-# .github/workflows/deploy-to-gcp.yml
 name: Deploy to GCP Cloud Run
 
 on:
@@ -8,13 +7,9 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    concurrency:
-      group: "${{ github.ref_name }}"
-      cancel-in-progress: true
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Authenticate to GCP
         uses: google-github-actions/auth@v2
@@ -29,14 +24,12 @@ jobs:
       - name: Configure Docker for Artifact Registry
         run: gcloud auth configure-docker ${{ secrets.GAR_LOCATION }}-docker.pkg.dev --quiet
 
-      - name: Build Docker image
+      - name: Build and push Docker image
         run: |
           IMAGE_URI="${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GAR_REPOSITORY }}/dotnet-mongo:${{ github.sha }}"
           docker build -t "$IMAGE_URI" -f Dockerfile .
+          docker push "$IMAGE_URI"
           echo "IMAGE_URI=$IMAGE_URI" >> "$GITHUB_ENV"
-
-      - name: Push Docker image to Artifact Registry
-        run: docker push "${{ env.IMAGE_URI }}"
 
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
