@@ -1,11 +1,14 @@
-# docker-compose.yml (без version: …)
+# docker-compose.yml
 services:
   api:
     build: .
     ports:
       - "9090:9090"
+    # Прокидываем .env внутрь контейнера
+    env_file:
+      - .env
+    # Говорим Compose взять эти переменные из env_file
     environment:
-      - DatabaseSettings__ConnectionString=${MONGODB_CONNECTION}
-      - DatabaseSettings__DatabaseName=BookstoreDb
-      - DatabaseSettings__BooksCollectionName=Books
-
+      - DatabaseSettings__ConnectionString
+      - DatabaseSettings__DatabaseName
+      - DatabaseSettings__BooksCollectionName
