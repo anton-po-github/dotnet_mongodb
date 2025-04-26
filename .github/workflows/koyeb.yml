@@ -26,8 +26,7 @@ jobs:
             git-builder: docker
             git-docker-dockerfile: Dockerfile
         
-            # Forward port 80 externally to 9090 in the container
-            service-ports: "80:9090"
+            service-ports: "80:http"
         
             # Environment variables (comma-separated)
             service-env: ASPNETCORE_ENVIRONMENT=Production,MONGODB_CONNECTION=${{ secrets.MONGODB_CONNECTION }}

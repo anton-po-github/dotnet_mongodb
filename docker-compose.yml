@@ -3,7 +3,7 @@ services:
   api:
     build: .
     ports:
-      - "9090:27017"
+      - "80:27017"
     # Прокидываем .env внутрь контейнера
     env_file:
       - .env
