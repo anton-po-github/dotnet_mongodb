@@ -27,6 +27,8 @@ jobs:
             git-docker-dockerfile: Dockerfile
         
             service-ports: "80:http"
+            service-checks: |
+              http GET /health 5 3
         
             # Environment variables (comma-separated)
             service-env: ASPNETCORE_ENVIRONMENT=Production,MONGODB_CONNECTION=${{ secrets.MONGODB_CONNECTION }}
