@@ -13,13 +13,13 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.2" />
         <PackageReference Include="MongoDB.Bson" Version="2.30.0" />
         <PackageReference Include="MongoDB.Driver" Version="2.30.0" />
         <PackageReference Include="MongoDB.Driver.GridFS" Version="2.30.0" />
         <PackageReference Include="AspNetCore.Identity.MongoDbCore" Version="6.0.0" />
         <PackageReference Include="JsonModelBinder" Version="2.0.0" />
         <PackageReference Include="Mailjet.Api" Version="3.0.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.2" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
     </ItemGroup>
 </Project>
