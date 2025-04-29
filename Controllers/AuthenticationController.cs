@@ -8,7 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authorization;
 
 [ApiController]
-[Route("api/v1/authenticate")]
+[Route("api/authenticate")]
 public class AuthenticationController : ControllerBase
 {
     private readonly UserManager<IdentityUser> _userManager;
@@ -60,6 +60,7 @@ public class AuthenticationController : ControllerBase
     public async Task<IActionResult> CreateRole([FromBody] CreateRoleRequest request)
     {
         var appRole = new IdentityRole { Name = request.Role };
+
         var createRole = await _roleManager.CreateAsync(appRole);
 
         return Ok(new { message = "role created succesfully" });

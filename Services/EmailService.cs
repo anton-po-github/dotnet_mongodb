@@ -29,7 +29,7 @@ public class EmailService
                 Resource = Send.Resource
             };
 
-            var confirmLink = $"dbSettings.Token.Issuer/api/v1/authenticate/confirm-email?email={emailModel.ToEmail}";
+            var confirmLink = $"dbSettings.Token.Issuer/api/authenticate/confirm-email?email={emailModel.ToEmail}";
             var emailModelBody = @"
                 Hello.
 

@@ -2,7 +2,7 @@ using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Mvc;
 
 [Produces("application/json")]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class UploadController : Controller
 {
     private readonly IHostEnvironment _hostEnvironment;

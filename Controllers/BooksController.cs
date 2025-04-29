@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 [Produces("application/json")]
 [Consumes("application/json", "multipart/form-data")]
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class BooksController : ControllerBase
 {
     private readonly BookService _bookService;

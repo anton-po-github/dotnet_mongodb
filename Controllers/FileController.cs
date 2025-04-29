@@ -3,7 +3,7 @@ using MongoDB.Bson;
 
 // [Authorize]
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class FileController : ControllerBase
 {
     private readonly FileService _fileService;
